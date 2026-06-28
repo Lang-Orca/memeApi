@@ -9,7 +9,7 @@ import { z } from "zod";
 const MemeDto = z.object({
     context: z.string().min(20),
     user_prompt: z.string().min(1),
-    temperature: z.number().optional().default(0.7).max(2.0).min(0.0),
+    temperature: z.number().min(0.0).max(2.0).optional().default(0.7),
 });
 
 /**
@@ -23,7 +23,7 @@ const updateMemeDto = z.object({
     base_image: z.base64(),
     context: z.string().min(20).optional(),
     user_prompt: z.string().min(1),
-    temperature: z.number().optional().default(0.7).max(2.0).min(0.0).optional(),
+    temperature: z.number().min(0.0).max(2.0).optional().default(0.7),
 });
 
-export { MemeDto , updateMemeDto};
+export { MemeDto, updateMemeDto };

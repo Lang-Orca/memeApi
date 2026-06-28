@@ -2,12 +2,15 @@ import express from "express";
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { swaggerOptions } from "../doc/swagger.js";
+import router from "./routes.js";
+import "dotenv/config";
+
 
 const app = express();
-const port = 8080;
+const port = 3000;
 
-app.use(express.json());
-
+app.use(express.json({ limit: "10mb" }));
+app.use(router);
 
 const spec = swaggerJSDoc(swaggerOptions);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(spec));

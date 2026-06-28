@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { MemeDto, updateMemeDto } from "./dto/memedto.js";
+import { createMeme, updateMeme } from "./service/meme.service.js";
 
 const router = Router();
 

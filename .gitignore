@@ -1,0 +1,8 @@
+.env
+node_modules
+test-image.js
+test-text.js
+test-update.js
+test.png
+base.png
+edited.png
