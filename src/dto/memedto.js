@@ -21,7 +21,7 @@ const MemeDto = z.object({
  */
 const updateMemeDto = z.object({
     base_image: z.base64(),
-    context: z.string().min(20).optional(),
+    context: z.string().min(10).optional(),
     user_prompt: z.string().min(1),
     temperature: z.number().min(0.0).max(2.0).optional().default(0.7),
 });

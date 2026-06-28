@@ -10,7 +10,8 @@ const createMeme = async (meme) => {
 const updateMeme = async (meme) => {
   const editInstruction = await generatePrompt(
     meme.context ?? "modification d'image",
-    meme.user_prompt
+    meme.user_prompt,
+    meme.base_image
   );
   const editedImage = await editImage(meme.base_image, editInstruction);
   return { image: editedImage };
