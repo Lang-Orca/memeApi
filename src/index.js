@@ -2,6 +2,7 @@ import express from "express";
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { swaggerOptions } from "../doc/swagger.js";
+import router from "./routes.js";
 
 const app = express();
 const port = 8080;
@@ -15,6 +16,8 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(spec));
 app.get("/", (req, res) => {
     res.redirect("/api-docs");
 });
+
+app.use("/", router);
 
 app.listen(port, () => {
   console.log(`Serveur démarré sur http://localhost:${port}`);
