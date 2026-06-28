@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { MemeDto, updateMemeDto } from "./dto/memedto.js";
 import { createMeme, updateMeme } from "./service/meme.service.js";
+import path from "path";
 
 const router = Router();
 
@@ -15,7 +16,7 @@ const router = Router();
  *         description: Message de bienvenue
  */
 router.get("/", (req, res) => {
-    res.send("Hello World!");
+    res.sendFile(path.resolve("public/index.html"));
 });
 
 

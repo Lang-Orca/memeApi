@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MemeForger API - Documentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #09090b 0%, #18181b 100%);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --accent-primary: #8b5cf6;
+            --accent-secondary: #d946ef;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --method-post: #10b981;
+            --method-get: #3b82f6;
+            --code-bg: rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            padding: 40px 20px;
+            overflow-x: hidden;
+        }
+
+        /* Ambient Glow Background */
+        .ambient-glow {
+            position: fixed;
+            top: -20vh;
+            left: -10vw;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, var(--accent-primary) 0%, transparent 60%);
+            opacity: 0.15;
+            filter: blur(80px);
+            z-index: -1;
+            animation: pulse 10s ease-in-out infinite alternate;
+        }
+        
+        .ambient-glow-2 {
+            position: fixed;
+            bottom: -20vh;
+            right: -10vw;
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, var(--accent-secondary) 0%, transparent 60%);
+            opacity: 0.15;
+            filter: blur(80px);
+            z-index: -1;
+            animation: pulse 12s ease-in-out infinite alternate-reverse;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.1; }
+            100% { transform: scale(1.1); opacity: 0.2; }
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: slideDown 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        .endpoint {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 35px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+        }
+
+        .endpoint:nth-child(2) { animation-delay: 0.1s; }
+        .endpoint:nth-child(3) { animation-delay: 0.2s; }
+
+        .endpoint:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 35px 60px -15px rgba(0, 0, 0, 0.6);
+        }
+
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .method {
+            font-size: 0.85rem;
+            font-weight: 800;
+            padding: 6px 14px;
+            border-radius: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .method.post { background: rgba(16, 185, 129, 0.15); color: var(--method-post); border: 1px solid rgba(16, 185, 129, 0.3); }
+        .method.get { background: rgba(59, 130, 246, 0.15); color: var(--method-get); border: 1px solid rgba(59, 130, 246, 0.3); }
+
+        .url {
+            font-size: 1.4rem;
+            font-family: monospace;
+            color: #e2e8f0;
+        }
+
+        .description {
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            margin: 25px 0 15px 0;
+            color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        h3::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+        }
+
+        .params-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 25px;
+            overflow: hidden;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .params-table th, .params-table td {
+            padding: 14px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+            background: rgba(0,0,0,0.2);
+        }
+        
+        .params-table th {
+            background: rgba(255,255,255,0.05);
+            font-weight: 600;
+            color: #e2e8f0;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        .params-table tr:last-child td { border-bottom: none; }
+
+        .param-name { font-weight: 600; color: var(--accent-secondary); font-family: monospace; font-size: 1.05rem; }
+        .param-type { color: var(--method-get); font-family: monospace; }
+        .param-req { font-size: 0.8rem; padding: 3px 8px; border-radius: 4px; background: rgba(255,255,255,0.1); }
+        .param-req.required { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+
+        pre {
+            background: var(--code-bg);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            overflow-x: auto;
+            color: #a78bfa;
+            font-family: monospace;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .endpoint { padding: 20px; }
+            .params-table th, .params-table td { padding: 10px; font-size: 0.9rem; }
+            .url { font-size: 1.1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="ambient-glow"></div>
+    <div class="ambient-glow-2"></div>
+
+    <div class="container">
+        <header>
+            <h1>MemeForger API</h1>
+            <p>Documentation officielle des points d'ancrage (Endpoints) de l'API de génération de memes.</p>
+        </header>
+
+        <!-- Endpoint: CREATE MEME -->
+        <div class="endpoint">
+            <div class="endpoint-header">
+                <span class="method post">POST</span>
+                <span class="url">/api/new</span>
+            </div>
+            <p class="description">Génère un tout nouveau meme à partir d'un contexte et d'une demande utilisateur en utilisant l'IA.</p>
+            
+            <h3>Body Parameters (JSON)</h3>
+            <table class="params-table">
+                <thead>
+                    <tr>
+                        <th>Paramètre</th>
+                        <th>Type</th>
+                        <th>Requis</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="param-name">context</td>
+                        <td class="param-type">string</td>
+                        <td><span class="param-req required">Requis</span></td>
+                        <td>Contexte général du meme (min. 20 caractères).</td>
+                    </tr>
+                    <tr>
+                        <td class="param-name">user_prompt</td>
+                        <td class="param-type">string</td>
+                        <td><span class="param-req required">Requis</span></td>
+                        <td>La demande précise de l'utilisateur pour le meme.</td>
+                    </tr>
+                    <tr>
+                        <td class="param-name">temperature</td>
+                        <td class="param-type">number</td>
+                        <td><span class="param-req">Optionnel</span></td>
+                        <td>Créativité de l'IA (entre 0.0 et 2.0). Par défaut: <code>0.7</code>.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Réponse Succès (200 OK)</h3>
+<pre>{
+  "result": {
+    "image": "base64_string_or_image_url_here"
+  }
+}</pre>
+        </div>
+
+        <!-- Endpoint: UPDATE MEME -->
+        <div class="endpoint">
+            <div class="endpoint-header">
+                <span class="method post">POST</span>
+                <span class="url">/update</span>
+            </div>
+            <p class="description">Modifie ou édite une image de meme existante (base_image) en fonction d'une nouvelle demande utilisateur.</p>
+            
+            <h3>Body Parameters (JSON)</h3>
+            <table class="params-table">
+                <thead>
+                    <tr>
+                        <th>Paramètre</th>
+                        <th>Type</th>
+                        <th>Requis</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="param-name">base_image</td>
+                        <td class="param-type">base64 string</td>
+                        <td><span class="param-req required">Requis</span></td>
+                        <td>L'image de base encodée en Base64 à modifier.</td>
+                    </tr>
+                    <tr>
+                        <td class="param-name">context</td>
+                        <td class="param-type">string</td>
+                        <td><span class="param-req">Optionnel</span></td>
+                        <td>Nouveau contexte ou indication (min. 10 caractères).</td>
+                    </tr>
+                    <tr>
+                        <td class="param-name">user_prompt</td>
+                        <td class="param-type">string</td>
+                        <td><span class="param-req required">Requis</span></td>
+                        <td>Instructions spécifiques de modification.</td>
+                    </tr>
+                    <tr>
+                        <td class="param-name">temperature</td>
+                        <td class="param-type">number</td>
+                        <td><span class="param-req">Optionnel</span></td>
+                        <td>Créativité de l'IA (entre 0.0 et 2.0). Par défaut: <code>0.7</code>.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Réponse Succès (200 OK)</h3>
+<pre>{
+  "result": {
+    "image": "base64_string_or_image_url_here"
+  }
+}</pre>
+        </div>
+        
+        <!-- Endpoint: PING/DOC -->
+        <div class="endpoint">
+            <div class="endpoint-header">
+                <span class="method get">GET</span>
+                <span class="url">/</span>
+            </div>
+            <p class="description">Retourne cette page de documentation.</p>
+        </div>
+    </div>
+</body>
+</html>

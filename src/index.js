@@ -15,9 +15,6 @@ app.use(router);
 const spec = swaggerJSDoc(swaggerOptions);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(spec));
 
-app.get("/", (req, res) => {
-    res.redirect("/api-docs");
-});
 
 app.listen(port, () => {
   console.log(`Serveur démarré sur http://localhost:${port}`);
